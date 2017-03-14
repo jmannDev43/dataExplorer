@@ -1,0 +1,38 @@
+html {
+  background-color: #044d65;
+  background-image: url('../../public/diagmonds-light.png');
+  /*background-color: #a7aeb8;*/
+  /*background-image: url('../public/diagmonds.png');*/
+  color: white;
+  font-family: 'Roboto Slab', sans-serif !important;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: transparent !important;
+}
+
+.container-full {
+  margin: 2em;
+}
+
+.center {
+  text-align: center;
+}
+
+.inputCell {
+  width: auto !important;
+  font-size: smaller !important;
+}
+
+.inputCell label {
+  color: #242424 !important;
+}
+
+.collectionNames {
+  overflow-y: auto;
+  overflow-x: hidden;
+  border: 1px solid gainsboro;
+  box-shadow: rgba(0, 0, 0, 0.117647) 0px 1px 6px, rgba(0, 0, 0, 0.117647) 0px 1px 4px;
+}

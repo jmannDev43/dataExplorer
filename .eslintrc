@@ -1,0 +1,63 @@
+# Any updates to this file needs to be replicated in all of our javascript projects
+ecmaFeatures:
+  modules: true
+  jsx: true
+
+engines:
+  eslint:
+    enabled: true
+    channel: "eslint-2"
+
+# enable ES6
+parserOptions:
+  ecmaVersion: 6
+  sourceType: "module"
+  ecmaFeatures:
+    jsx: true # enable React's JSX
+
+parser: "babel-eslint"
+
+# register plugins
+plugins:
+  - react
+  - flowtype
+
+# use the rules of eslint-config-airbnb
+extends:
+  - airbnb/base
+  - plugin:react/recommended
+
+# registerenvironments
+env:
+  amd: true
+  browser: true
+  es6: true
+  mocha: true
+  node: true
+
+rules:
+  # overwrite some rules (avoid semicolons)
+  flowtype/define-flow-type: 1
+  flowtype/use-flow-type: 1
+  func-names: 0
+  import/no-extraneous-dependencies: 0
+  import/no-unresolved: 0
+  indent: [2, 2, { "SwitchCase": 1 }]
+  max-depth: 0
+  max-len: [1, 150, 2, { "ignoreComments": true }]
+  max-nested-callbacks: 0
+  max-params: 0
+  max-statements: [1, 30]
+  new-cap: [1, { "capIsNewExceptions": ["Maybe", "OneOf"] }]
+  no-bitwise: 0
+  no-prototype-builtins: 2
+  no-throw-literal: 0
+  no-underscore-dangle: [2, { "allow": ["_id", "_routes"] }]
+  no-unexpected-multiline: 2
+  no-use-before-define: ["error", { "functions": false }]
+  object-shorthand: [2, "always", { "avoidQuotes": false }]
+  prefer-arrow-callback: 1
+  quote-props: [2, "as-needed"]
+  quotes: [2, "single", { "avoidEscape": true }]
+  radix: [2, "as-needed"]
+  react/prop-types: 1
