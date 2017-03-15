@@ -42,8 +42,8 @@ class SchemaSetup extends Component {
             <CardTitle title="Enter database connection information below"/>
             <CardText>
               <TextField id="hostname" floatingLabelText={'Hostname'} defaultValue={'localhost'}/>
-              <TextField id="port" floatingLabelText={'Port'} defaultValue={'27017'}/>
-              <TextField id="database" floatingLabelText={'Database name'} defaultValue={'Northwind'}/>
+              <TextField id="port" floatingLabelText={'Port'} defaultValue={'3001'}/>
+              <TextField id="database" floatingLabelText={'Database name'} defaultValue={'meteor'}/>
               <br />
               <TextField id="username" floatingLabelText={'Username (optional)'}/>
               <TextField id="password" floatingLabelText={'Password (optional)'} type="password"/>

@@ -2,80 +2,106 @@ import React, { Component } from 'react';
 import RaisedButton from 'material-ui/RaisedButton';
 import TextField from 'material-ui/TextField';
 import { Card, CardText } from 'material-ui/Card';
+import AddCircleOutline from 'material-ui/svg-icons/content/add-circle-outline';
+import AddCircle from 'material-ui/svg-icons/content/add-circle';
 import Subheader from 'material-ui/Subheader';
-
+import FloatingActionButton from 'material-ui/FloatingActionButton';
+import ContentAdd from 'material-ui/svg-icons/content/add';
+import ContentRemove from 'material-ui/svg-icons/content/remove';
 import Drawer from 'material-ui/Drawer';
 import MenuItem from 'material-ui/MenuItem';
+import AutoComplete from 'material-ui/AutoComplete';
 
-class CollectionNames extends Component {
+
+class QueryRow extends Component {
+  constructor() {
+    super();
+    this.state = {
+      fields: [],
+    };
+  }
+  changeCollection = () => {
+    const selectedCollection = document.getElementById(`row${this.props.rowNumber}_collection`).value;
+    if (selectedCollection) {
+      const collectionInfo = this.props.dbSchema[selectedCollection];
+      const fields = collectionInfo.collectionFields;
+      this.setState({ fields });
+    }
+  };
   render() {
+    const style = { margin: '0 1em 0 1em' };
+    const fabMethod = this.props.rowNumber === this.props.lastRowNumber ? this.props.addRow : this.props.removeRow;
+    const fabIcon = this.props.rowNumber === this.props.lastRowNumber ? <ContentAdd/> : <ContentRemove/>;
     return (
-    <Drawer open={true}>
-      {this.props.collectionNames.map(collection => {
-        return <MenuItem key={collection} onTouchTap={this.props.selectCollection}>{collection}</MenuItem>;
-      })}
-    </Drawer>
+      <div className="center queryRow" data-row-number={this.props.rowNumber}>
+        <h3 className="inline">FIND </h3>
+        <AutoComplete
+          id={`row${this.props.rowNumber}_collection`}
+          style={style}
+          hintText="Enter collection name"
+          dataSource={this.props.collectionNames}
+          filter={(searchText, key) => (key.indexOf(searchText) !== -1)}
+          openOnFocus={true}
+          onClose={this.changeCollection.bind(this)}
+        />
+        <h3 className="inline"> WHERE </h3>
+        <AutoComplete
+          id={`row${this.props.rowNumber}_field`}
+          style={style}
+          hintText="Enter field name"
+          dataSource={this.state.fields}
+          filter={(searchText, key) => (key.indexOf(searchText) !== -1)}
+          openOnFocus={true}
+        />
+        <h3 className="inline"> = </h3>
+        <TextField id={`row${this.props.rowNumber}_value`} style={style} floatingLabelText="Enter value(s)" hintText="separate multiple values with ','" />
+        <FloatingActionButton onTouchTap={fabMethod} id={`fab_${this.props.rowNumber}`} mini={true} secondary={true} style={style}>
+            {fabIcon}
+        </FloatingActionButton>
+      </div>
     );
   }
 }
 
-// class CollectionNames extends Component {
-//   render() {
-//     const collectionStyle = { marginBottom: '0.5em' };
-//     const containerStyle = { height: window.innerHeight - 115 };
-//     return (
-//       <div className="collectionNames" style={containerStyle}>
-//         {this.props.collectionNames.map(collection => {
-//           return <div key={collection}>
-//             <RaisedButton style={collectionStyle} onClick={this.props.selectCollection} label={collection} primary={true}/>
-//             <br />
-//           </div>
-//         })}
-//       </div>
-//     );
-//   }
-// }
+QueryRow.defaultProps = {
+  collectionSearchText: '',
+  fields: [],
+};
 
-class InputCell extends Component {
-  render() {
-    const inputId = `${this.props.collection}_${this.props.field}`;
-    return (
-      <TextField id={inputId} className="inputCell" floatingLabelText={this.props.field} />
-    )
+class QueryArea extends Component {
+  constructor() {
+    super();
+    this.state = {
+      queryRows: [0],
+    };
   }
-}
-
-class InputRows extends Component {
+  addRow = (e) => {
+    const nextRow = this.state.queryRows[this.state.queryRows.length - 1] + 1;
+    const queryRows = this.state.queryRows.slice();
+    queryRows.push(nextRow);
+    this.setState({ queryRows });
+  };
+  removeRow = (e) => {
+    const removeIndex = parseInt(e.currentTarget.getAttribute('id').replace('fab_', ''));
+    const queryRows = this.state.queryRows.slice();
+    queryRows.splice(removeIndex, 1);
+    this.setState({ queryRows });
+  };
   render() {
     return (
-      <div className="row">
-        <span>{this.props.inputRow.collectionName}</span>
-        <br />
-        {this.props.inputRow.fields.map(field => {
-          return <InputCell key={field} collection={this.props.inputRow.collectionName} field={field}/>
+      <div>
+        {this.state.queryRows.map(row => {
+          return <QueryRow key={row.toString()}
+                   addRow={this.addRow.bind(this)}
+                   removeRow={this.removeRow.bind(this)}
+                   rowNumber={row}
+                   lastRowNumber={(this.state.queryRows.length - 1)}
+                   collectionNames={this.props.collectionNames}
+                   dbSchema={this.props.dbSchema}
+                />
         })}
       </div>
-    )
-  }
-}
-
-class InputArea extends Component {
-  render() {
-    return (
-      this.props.selectedCollections.length < 1 ? null :
-        <div className="row">
-          <div className="col col-sm-12 center">
-            <Card>
-              <Subheader>Add values to the fields below to filter data.</Subheader>
-              <CardText>
-                {this.props.selectedCollections.map((collection, i) => {
-                  return <InputRows key={i.toString()} inputRow={collection}/>
-                })}
-              </CardText>
-            </Card>
-          </div>
-        </div>
-    )
+    );
   }
 }
 
@@ -86,36 +112,43 @@ class DataExplorer extends Component {
       selectedCollections: [],
     };
   }
-  toggleSelectedCollections(e) {
-    const collectionName = e.target.innerText;
-    const schema = this.props.location.state.dbSchema;
-    const collectionInfo = schema[collectionName];
-    if (collectionInfo) {
-      const selectedCollections = this.state.selectedCollections.slice();
-      const indexOfSelected = selectedCollections.findIndex(c => c.collectionName === collectionName);
-      if (indexOfSelected > -1) {
-        e.target.style.background = 'initial';
-        selectedCollections.splice(indexOfSelected, 1);
-      } else {
-        e.target.style.backgroundColor = '#abe8ab';
-        const fields = collectionInfo.collectionFields;
-        selectedCollections.push({ collectionName, fields });
-      }
-      this.setState({ selectedCollections });
-    }
-    // add toastr to alert that collection has no fields...
-  }
   render() {
     const { collectionNames, dbSchema } = this.props.location.state;
     console.log('collectionNames', collectionNames);
     return (
       <div id="dataExplorer">
-        <div className="col col-sm-3">
-          <CollectionNames collectionNames={collectionNames} selectCollection={this.toggleSelectedCollections.bind(this)}/>
+        <div className="row">
+          <div className="col col-sm-6 col-sm-offset-3">
+            <Card>
+              <CardText>
+                <QueryArea collectionNames={collectionNames.sort()} dbSchema={dbSchema} />
+                <div className="row center">
+                  <RaisedButton primary={true} label="Get Data" />
+                </div>
+              </CardText>
+            </Card>
+          </div>
         </div>
-        <div className="col col-sm-9">
-          <InputArea selectedCollections={this.state.selectedCollections} />
+        <br />
+        <div className="row">
+          <div className="col col-sm-12">
+            <Card>
+              <CardText>
+                <ResultArea />
+              </CardText>
+            </Card>
+          </div>
         </div>
+      </div>
+    );
+  }
+}
+
+class ResultArea extends Component {
+  render() {
+    return (
+      <div>
+        <h1>Result Area</h1>
       </div>
     );
   }
