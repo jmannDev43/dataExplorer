@@ -5,9 +5,17 @@ import { Card, CardTitle, CardText } from 'material-ui/Card';
 import request from 'request';
 import { browserHistory } from 'react-router';
 
-// Would be cool to give option to enter connection string instead.
+import Loading from './Loading';
+
 class SchemaSetup extends Component {
+  constructor() {
+    super();
+    this.state = {
+      loading: false,
+    };
+  }
   getSchema() {
+    this.setState({ loading: true });
     const hostname = document.getElementById('hostname').value;
     const port = document.getElementById('port').value;
     const database = document.getElementById('database').value;
@@ -23,8 +31,7 @@ class SchemaSetup extends Component {
     request(url, (err, res, body) => {
       const { dbSchema } = JSON.parse(body);
       const collectionNames = Object.keys(dbSchema);
-      console.log('collectionNames', collectionNames);
-      console.log('dbSchema', dbSchema);
+      this.setState({ loading: false });
       browserHistory.push({
         pathname: '/dataExplorer',
         state: {
@@ -34,7 +41,26 @@ class SchemaSetup extends Component {
       });
     });
   }
+  skipSetupWhenSchemaFileExists() {
+    if (this.props.location.state && this.props.location.state.overrideFile) {
+      return true;
+    }
+    request('http://localhost:9000/schemaFileExists', (err, res, body) => {
+      if (res) {
+        const dbSchema = JSON.parse(res.body);
+        const collectionNames = Object.keys(dbSchema);
+        browserHistory.push({
+          pathname: '/dataExplorer',
+          state: {
+            collectionNames,
+            dbSchema,
+          },
+        });
+      }
+    });
+  }
   render() {
+    this.skipSetupWhenSchemaFileExists();
     return (
       <div className="row">
         <div className="col col-sm-8 col-sm-offset-2 center">
@@ -51,6 +77,8 @@ class SchemaSetup extends Component {
               <RaisedButton label="Retrieve Schema Info" primary={true} onClick={this.getSchema.bind(this)}/>
             </CardText>
           </Card>
+          <br />
+          {this.state.loading ? <Loading/> : null}
         </div>
       </div>
     );

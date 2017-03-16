@@ -1,9 +1,14 @@
-const fileExists = require('file-exists');
 const fs = require('fs');
+const jsonfile = require('jsonfile');
 
 const schemaFileExists = () => {
-  return fs.existsSync(`${process.cwd()}/dbSchema.js`);
-};
+  const file = `${process.cwd()}/dbSchema.js`;
+  const fileExists = fs.existsSync(file);
 
+  if (fileExists) {
+    return jsonfile.readFileSync(file);
+  }
+  return false;
+};
 
 module.exports = schemaFileExists;

@@ -43,28 +43,21 @@ const getSchema = (hostname, port, databaseName, userName, password) => {
                   if (name === lastCollectionName) {
                     const retVal = { dbSchema };
                     db.close();
+                    const file = `${process.cwd()}/dbSchema.js`;
+
+                    // clear file
+                    exec(`> ${file}`, () => {
+                      console.log('clear finished');
+                      jsonfile.writeFile(file, dbSchema, { spaces: 2 }, (err) => {
+                        console.log('write json finished');
+                        if (err) {
+                          console.error(err);
+                        }
+                      });
+                    });
+
                     return resolve(JSON.stringify(retVal));
                   }
-                  // console.log('dbSchema', JSON.stringify(dbSchema));
-                  // return JSON.stringify(dbSchema);
-                  //   console.log('dbSchema successfully processed!');
-                  //   return dbSchema;
-                  // const file = `${process.cwd()}/dbSchema.js`;
-                  //
-                  // // clear file
-                  // exec(`> ${file}`, () => {
-                  //   console.log('clear finished');
-                  //   jsonfile.writeFile(file, dbSchema, { spaces: 2 }, (err) => {
-                  //     console.log('write json finished');
-                  //     if (err) {
-                  //       console.error(err);
-                  //     } else {
-                  //       exec(`echo "var collectionFields = " | cat - ${file} > temp && mv temp ${file}`);
-                  //     }
-                  //   });
-                  // });
-                  // }
-
                 } catch (e) {
                   console.log('PROBLEM WITH STDOUT', stdout);
                   return false;

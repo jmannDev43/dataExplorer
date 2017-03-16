@@ -11,5 +11,5 @@ injectTapEventPlugin();
 
 ReactDOM.render(
   <Routes history={browserHistory} />,
-  document.getElementById('root')
+  document.getElementById('root'),
 );
