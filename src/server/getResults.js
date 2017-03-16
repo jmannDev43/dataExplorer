@@ -8,6 +8,7 @@ const getResults = (mongoUrl, limit, queries) => {
   // fake json data generated from http://www.json-generator.com/#
   return [{
     collection: 'collection1',
+    id: 'collection1_1',
     data: [{
       "_id": "58caec79d1aa737c5ae3720c",
       "index": 0,
@@ -90,6 +91,7 @@ const getResults = (mongoUrl, limit, queries) => {
   },
     {
       collection: 'collection2',
+      id: 'collection2_1',
       data: [
         {
           "_id": "58caec797d0bbb01c8357528",

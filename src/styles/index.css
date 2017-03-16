@@ -48,3 +48,10 @@ body {
 .json-formatter-dark.json-formatter-row .json-formatter-string {
   color: #FE5DA6 !important;
 }
+
+.closeIcon {
+  position: absolute;
+  right: 29px;
+  top: 11px;
+  cursor: pointer;
+}

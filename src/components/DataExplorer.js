@@ -41,8 +41,13 @@ class DataExplorer extends Component {
   };
   getResults = () => {
     request('http://localhost:9000/getResults', (err, res, body) => {
-      this.setState({ jsonResults: body });
+      const jsonResults = JSON.parse(body);
+      this.setState({ jsonResults });
     });
+  };
+  clearResult = (resultId) => {
+    const jsonResults = this.state.jsonResults.filter(result => result.id !== resultId);
+    this.setState({ jsonResults });
   };
   render() {
     const { collectionNames, dbSchema, connectionInfo } = this.props.location.state;
@@ -53,11 +58,10 @@ class DataExplorer extends Component {
           <div className="col col-sm-10 col-sm-offset-1">
             <Card>
               <CardText>
-                <QueryArea collectionNames={collectionNames.sort()} dbSchema={dbSchema}/>
+                <QueryArea collectionNames={collectionNames.sort()} dbSchema={dbSchema} runQuery={this.getResults.bind(this)}/>
                 <div className="row center">
                   <ConnectionModal open={this.state.isModalOpen} connectionInfo={connectionInfo} submit={this.submitModal.bind(this)} closeModal={this.closeModal.bind(this)} />
                   <RaisedButton style={style} onClick={this.openModal} primary={false} label="Configure DB Connection"/>
-                  <RaisedButton primary={true} onClick={this.getResults.bind(this)} label="Get Data"/>
                 </div>
               </CardText>
             </Card>
@@ -67,7 +71,7 @@ class DataExplorer extends Component {
         {this.state.jsonResults.length ?
           <div className="row">
             <div className="col col-sm-12">
-              <ResultArea jsonResults={this.state.jsonResults} />
+              <ResultArea jsonResults={this.state.jsonResults} clearResult={this.clearResult.bind(this)} />
             </div>
           </div>
           : null}

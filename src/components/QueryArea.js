@@ -44,6 +44,7 @@ class QueryArea extends Component {
             lastRowNumber={this.state.queryRows[(this.state.queryRows.length - 1)].rowNumber}
             collectionNames={this.props.collectionNames}
             dbSchema={this.props.dbSchema}
+            runQuery={this.props.runQuery}
           />;
         })}
       </div>

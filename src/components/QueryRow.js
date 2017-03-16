@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import TextField from 'material-ui/TextField';
 import FloatingActionButton from 'material-ui/FloatingActionButton';
 import ContentAdd from 'material-ui/svg-icons/content/add';
+import PlayArrow from 'material-ui/svg-icons/av/play-arrow';
 import ContentRemove from 'material-ui/svg-icons/content/remove';
 import AutoComplete from 'material-ui/AutoComplete';
 
@@ -63,6 +64,12 @@ class QueryRow extends Component {
           style={style} floatingLabelText="Enter value(s)"
           hintText="separate multiple values with ','"
         />
+        <FloatingActionButton
+          onTouchTap={this.props.runQuery}
+          mini={true} secondary={true}
+          style={style}>
+          {<PlayArrow />}
+        </FloatingActionButton>
         <FloatingActionButton
           onTouchTap={fabMethod}
           id={`fab_${this.props.rowInfo.rowNumber}`}
