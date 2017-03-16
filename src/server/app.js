@@ -3,6 +3,7 @@ const path = require('path');
 
 const getSchema = require('./getSchema.js');
 const schemaFileExists = require('./schemaFileExists.js');
+const getResults = require('./getResults.js');
 
 const app = express();
 
@@ -25,6 +26,10 @@ app.get('/getSchema/:hostname/:port/:database/:username?/:password?', (req, res)
 
 app.get('/schemaFileExists', (req, res) => {
   res.send(schemaFileExists());
+});
+
+app.get('/getResults', (req, res) => {
+  res.send(getResults());
 });
 
 module.exports = app;
