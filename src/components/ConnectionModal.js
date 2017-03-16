@@ -27,9 +27,22 @@ class ConnectionModal extends Component {
         open={this.props.open}
         onRequestClose={this.props.closeModal}
       >
-        <TextField id="connectionURI" floatingLabelText={'Enter Connection URI'} fullWidth={true} />
+        <div className="col col-sm-8">
+          <TextField id="mongoUrl" defaultValue={this.props.connectionInfo.mongoUrl} floatingLabelText={'Enter Connection URI'} fullWidth={true} />
+        </div>
+        <div className="col col-sm-4">
+          <TextField id="limitPerCollection" defaultValue={this.props.connectionInfo.limit} floatingLabelText={'Enter collection limit'} fullWidth={true} />
+        </div>
       </Dialog>
     );
   }
 }
+
+ConnectionModal.defaultProps = {
+  connectionInfo: {
+    mongoUrl: '',
+    limit: 5,
+  },
+};
+
 export default ConnectionModal;

@@ -18,7 +18,10 @@ class DataExplorer extends Component {
       selectedCollections: [],
       jsonResults: [],
       isModalOpen: false,
-      connectionURI: '',
+      connectionInfo: {
+        mongoUrl: '',
+        limit: 5,
+      },
     };
   }
   openModal = () => {
@@ -28,12 +31,16 @@ class DataExplorer extends Component {
     this.setState({ isModalOpen: false });
   };
   submitModal = () => {
-    const connectionURI = document.getElementById('connectionURI').value;
-    this.setState({ connectionURI });
+    const mongoUrl = document.getElementById('mongoUrl').value;
+    const connectionInfo = {
+      mongoUrl,
+      limit: 5,
+    };
+    this.setState({ connectionInfo });
     this.closeModal();
   }
   render() {
-    const { collectionNames, dbSchema } = this.props.location.state;
+    const { collectionNames, dbSchema, connectionInfo } = this.props.location.state;
     const style = { marginRight: '1em' };
     return (
       <div id="dataExplorer">
@@ -43,7 +50,7 @@ class DataExplorer extends Component {
               <CardText>
                 <QueryArea collectionNames={collectionNames.sort()} dbSchema={dbSchema}/>
                 <div className="row center">
-                  <ConnectionModal open={this.state.isModalOpen} submit={this.submitModal.bind(this)} closeModal={this.closeModal.bind(this)} />
+                  <ConnectionModal open={this.state.isModalOpen} connectionInfo={connectionInfo} submit={this.submitModal.bind(this)} closeModal={this.closeModal.bind(this)} />
                   <RaisedButton style={style} onClick={this.openModal} primary={false} label="Configure DB Connection"/>
                   <RaisedButton primary={true} label="Get Data"/>
                 </div>

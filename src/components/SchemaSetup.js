@@ -14,21 +14,29 @@ class SchemaSetup extends Component {
       loading: false,
     };
   }
-  getSchema() {
-    this.setState({ loading: true });
+  getConnectionUrlFromForm(baseUrl, isMongo) {
     const hostname = document.getElementById('hostname').value;
     const port = document.getElementById('port').value;
     const database = document.getElementById('database').value;
     const username = document.getElementById('username').value;
     const password = document.getElementById('password').value;
-    let url;
-    const baseUrl = 'http://localhost:9000/getSchema';
+    const portSeparator = isMongo ? ':' : '/';
+    baseUrl = isMongo ? 'mongodb://' : baseUrl;
+
+    let connectionString;
+
     if (username && password) {
-      url = `${baseUrl}/${hostname}/${port}/${database}/${username}/${password}`;
+      connectionString = `${baseUrl}${hostname}${portSeparator}${port}/${database}/${username}/${password}`;
     } else {
-      url = `${baseUrl}/${hostname}/${port}/${database}`;
+      connectionString = `${baseUrl}${hostname}${portSeparator}${port}/${database}`;
     }
-    request(url, (err, res, body) => {
+    return connectionString;
+  }
+  getSchema() {
+    this.setState({ loading: true });
+    const getSchemaUrl = this.getConnectionUrlFromForm('http://localhost:9000/getSchema/', false);
+    const mongoUrl = this.getConnectionUrlFromForm('', true);
+    request(getSchemaUrl, (err, res, body) => {
       const { dbSchema } = JSON.parse(body);
       const collectionNames = Object.keys(dbSchema);
       this.setState({ loading: false });
@@ -37,10 +45,14 @@ class SchemaSetup extends Component {
         state: {
           collectionNames,
           dbSchema,
+          connectionInfo: {
+            mongoUrl,
+            limit: 5,
+          },
         },
       });
     });
-  }
+  };
   skipSetupWhenSchemaFileExists() {
     if (this.props.location.state && this.props.location.state.overrideFile) {
       return true;
@@ -68,8 +80,8 @@ class SchemaSetup extends Component {
             <CardTitle title="Enter database connection information below"/>
             <CardText>
               <TextField id="hostname" floatingLabelText={'Hostname'} defaultValue={'localhost'}/>
-              <TextField id="port" floatingLabelText={'Port'} defaultValue={'3001'}/>
-              <TextField id="database" floatingLabelText={'Database name'} defaultValue={'meteor'}/>
+              <TextField id="port" floatingLabelText={'Port'} defaultValue={'27017'}/>
+              <TextField id="database" floatingLabelText={'Database name'} defaultValue={'Northwind'}/>
               <br />
               <TextField id="username" floatingLabelText={'Username (optional)'}/>
               <TextField id="password" floatingLabelText={'Password (optional)'} type="password"/>
