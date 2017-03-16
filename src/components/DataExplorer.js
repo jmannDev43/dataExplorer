@@ -1,13 +1,14 @@
 import React, { Component } from 'react';
 import RaisedButton from 'material-ui/RaisedButton';
 import { Card, CardText } from 'material-ui/Card';
+import ConnectionModal from './ConnectionModal';
 
 import QueryArea from './QueryArea';
 import ResultArea from './ResultArea';
 
 /*
-  TODO: Get mongorito up and running
-  TODO: Add ability to connect via mongo URI
+  TODO: Get querying up and running
+  TODO: Display results with json formatter
  */
 
 class DataExplorer extends Component {
@@ -16,10 +17,24 @@ class DataExplorer extends Component {
     this.state = {
       selectedCollections: [],
       jsonResults: [],
+      isModalOpen: false,
+      connectionURI: '',
     };
+  }
+  openModal = () => {
+    this.setState({ isModalOpen: true });
+  };
+  closeModal = () => {
+    this.setState({ isModalOpen: false });
+  };
+  submitModal = () => {
+    const connectionURI = document.getElementById('connectionURI').value;
+    this.setState({ connectionURI });
+    this.closeModal();
   }
   render() {
     const { collectionNames, dbSchema } = this.props.location.state;
+    const style = { marginRight: '1em' };
     return (
       <div id="dataExplorer">
         <div className="row">
@@ -28,6 +43,8 @@ class DataExplorer extends Component {
               <CardText>
                 <QueryArea collectionNames={collectionNames.sort()} dbSchema={dbSchema}/>
                 <div className="row center">
+                  <ConnectionModal open={this.state.isModalOpen} submit={this.submitModal.bind(this)} closeModal={this.closeModal.bind(this)} />
+                  <RaisedButton style={style} onClick={this.openModal} primary={false} label="Configure DB Connection"/>
                   <RaisedButton primary={true} label="Get Data"/>
                 </div>
               </CardText>
