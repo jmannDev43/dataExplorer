@@ -44,7 +44,6 @@ class DataExplorer extends Component {
     const mongoUrl = encodeURIComponent(this.state.connectionInfo.mongoUrl);
     const limit = this.state.connectionInfo.limit;
     const rowNumber = e.currentTarget.getAttribute('id').replace('_run', '');
-    console.log('rowNumber', rowNumber);
     const collection = document.getElementById(`${rowNumber}_collection`).value;
     const field = document.getElementById(`${rowNumber}_field`).value;
     const value = document.getElementById(`${rowNumber}_value`).value;
@@ -55,14 +54,19 @@ class DataExplorer extends Component {
       return false;
     }
     request(getResultsUrl, (err, res, body) => {
-      const jsonResults = JSON.parse(body);
+      let newJsonResults = JSON.parse(body);
       if (err){
         console.log('err', err);
         // Send 'Error' message
       }
-      if (jsonResults.length){
-        jsonResults[0].collection = collection;
-        jsonResults[0].id = `${collection}_${rowNumber}`;
+      if (newJsonResults.length){
+        newJsonResults = newJsonResults[0];
+        newJsonResults.collection = collection;
+        newJsonResults.id = `${collection}_${rowNumber}`;
+
+        const jsonResults = this.state.jsonResults.slice();
+        jsonResults.push(newJsonResults);
+
         this.setState({ jsonResults });
       } else {
         // Send 'No Results' message

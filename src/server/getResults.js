@@ -23,7 +23,6 @@ const getResults = (mongoUrl, limit, collection, field, value) => {
       query[field] = newValue;
       const limitInt = parseInt(limit);
       db.collection(collection).find(query).limit(limitInt).toArray((err, results) => {
-        console.log('results', results);
         db.close();
         return resolve(JSON.stringify(results));
       });
