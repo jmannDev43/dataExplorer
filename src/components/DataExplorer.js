@@ -20,6 +20,10 @@ class DataExplorer extends Component {
       },
     };
   }
+  componentDidMount() {
+    const { connectionInfo } = this.props.location.state;
+    this.setState({ connectionInfo });
+  }
   openModal = () => {
     this.setState({ isModalOpen: true });
   };
