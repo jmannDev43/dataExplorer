@@ -7,10 +7,6 @@ import ConnectionModal from './ConnectionModal';
 import QueryArea from './QueryArea';
 import ResultArea from './ResultArea';
 
-/*
-  TODO: Get querying up and running
- */
-
 class DataExplorer extends Component {
   constructor(props) {
     super(props);
@@ -39,10 +35,34 @@ class DataExplorer extends Component {
     this.setState({ connectionInfo });
     this.closeModal();
   };
-  getResults = () => {
-    request('http://localhost:9000/getResults', (err, res, body) => {
+  getResults = (e) => {
+    console.log('e', e);
+    const mongoUrl = encodeURIComponent(this.state.connectionInfo.mongoUrl);
+    const limit = this.state.connectionInfo.limit;
+    const rowNumber = e.currentTarget.getAttribute('id').replace('_run', '');
+    console.log('rowNumber', rowNumber);
+    const collection = document.getElementById(`${rowNumber}_collection`).value;
+    const field = document.getElementById(`${rowNumber}_field`).value;
+    const value = document.getElementById(`${rowNumber}_value`).value;
+    const baseUrl = 'http://localhost:9000/getResults';
+    const getResultsUrl = `${baseUrl}/${mongoUrl}/${limit}/${collection}/${field}/${value}`;
+    if (!mongoUrl || !limit || !collection || !field || !value){
+      // Send 'Missing Inputs' message
+      return false;
+    }
+    request(getResultsUrl, (err, res, body) => {
       const jsonResults = JSON.parse(body);
-      this.setState({ jsonResults });
+      if (err){
+        console.log('err', err);
+        // Send 'Error' message
+      }
+      if (jsonResults.length){
+        jsonResults[0].collection = collection;
+        jsonResults[0].id = `${collection}_${rowNumber}`;
+        this.setState({ jsonResults });
+      } else {
+        // Send 'No Results' message
+      }
     });
   };
   clearResult = (resultId) => {

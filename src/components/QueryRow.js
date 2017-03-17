@@ -65,6 +65,7 @@ class QueryRow extends Component {
           hintText="separate multiple values with ','"
         />
         <FloatingActionButton
+          id={`${this.props.rowInfo.rowNumber}_run`}
           onTouchTap={this.props.runQuery}
           mini={true} secondary={true}
           style={style}>

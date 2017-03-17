@@ -28,8 +28,15 @@ app.get('/schemaFileExists', (req, res) => {
   res.send(schemaFileExists());
 });
 
-app.get('/getResults', (req, res) => {
-  res.send(getResults());
+app.get('/getResults/:mongoUrl/:limit/:collection/:field/:value', (req, res) => {
+  const mongoUrl = req.params.mongoUrl;
+  const limit = req.params.limit;
+  const collection = req.params.collection;
+  const field = req.params.field;
+  const value = req.params.value;
+  getResults(mongoUrl, limit, collection, field, value).then((json) => {
+    res.send(json);
+  });
 });
 
 module.exports = app;
