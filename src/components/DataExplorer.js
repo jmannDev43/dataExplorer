@@ -78,7 +78,6 @@ class DataExplorer extends Component {
       }
       const newJsonResults = JSON.parse(body);
       if (newJsonResults.length) {
-        // newJsonResults.data = newJsonResults;
         newJsonResults.collection = collection;
         newJsonResults.id = `result_${rowNumber}`;
         const jsonResults = this.state.jsonResults.slice();
