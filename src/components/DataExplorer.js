@@ -76,9 +76,9 @@ class DataExplorer extends Component {
         this.setState({ snackMessage });
         return false;
       }
-      let newJsonResults = JSON.parse(body);
+      const newJsonResults = JSON.parse(body);
       if (newJsonResults.length) {
-        newJsonResults = newJsonResults[0];
+        // newJsonResults.data = newJsonResults;
         newJsonResults.collection = collection;
         newJsonResults.id = `result_${rowNumber}`;
         const jsonResults = this.state.jsonResults.slice();
