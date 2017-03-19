@@ -1,4 +1,4 @@
-# data explorer
+# dataExplorer
 
 ### Mongo client written in React with Material-UI components.
  
@@ -10,4 +10,4 @@
 
 ![dataExplorer png](./dataExplorer.png)
 
-Shout out to `mohsen1` @ https://github.com/mohsen1/json-formatter-js for his awesome json-formatter-js npm package!
+Shout out to `mohsen1` @ https://github.com/mohsen1/json-formatter-js for his awesome json-formatter-js npm package and to `tmcnab` @ https://github.com/tmcnab/northwind-mongo for his sample Northwind Mongo database!
