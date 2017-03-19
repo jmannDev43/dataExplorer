@@ -23,7 +23,7 @@ class QueryArea extends Component {
     this.setState({ queryRows });
   }
   removeRow(e) {
-    const removeIndex = parseInt(e.currentTarget.getAttribute('id').substr(0, 1));
+    const removeIndex = parseInt(e.currentTarget.getAttribute('id').substr(0, 1), 10);
     const queryRows = this.state.queryRows.slice();
     queryRows.splice(removeIndex, 1);
     this.setState({ queryRows });
