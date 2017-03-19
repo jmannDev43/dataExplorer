@@ -8,7 +8,6 @@ class ResultArea extends Component {
       numberCollectionsInResult: 0,
     };
   }
-
   render() {
     return (
       <div>

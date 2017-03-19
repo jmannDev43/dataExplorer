@@ -3,14 +3,8 @@ const Promise = require('promise');
 
 const MongoClient = mongodb.MongoClient;
 
-const getResults = (mongoUrl, limit, collection, field, value) => {
-  // console.log('mongoUrl', mongoUrl);
-  // console.log('limit', limit);
-  // console.log('collection', collection);
-  // console.log('field', field);
-  // console.log('value', value);
-
-  const newValue = isNaN(parseInt(value)) ? value : parseInt(value);
+const getResults = (mongoUrl, limit, collection, field, value, valueType) => {
+  const newValue = convertValue(value, valueType);
 
   return new Promise((resolve, reject) => {
     MongoClient.connect(mongoUrl, (err, db) => {
@@ -23,11 +17,21 @@ const getResults = (mongoUrl, limit, collection, field, value) => {
       query[field] = newValue;
       const limitInt = parseInt(limit);
       db.collection(collection).find(query).limit(limitInt).toArray((err, results) => {
+        console.log('results', results);
         db.close();
         return resolve(JSON.stringify(results));
       });
     });
   });
+};
+
+const convertValue = (value, valueType) => {
+  if (valueType === 'float') {
+    return parseFloat(value);
+  } else if (valueType === 'int') {
+    return parseInt(value);
+  }
+  return value;
 };
 
 module.exports = getResults;

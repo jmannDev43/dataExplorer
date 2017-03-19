@@ -1,11 +1,14 @@
 import React, { Component } from 'react';
 import RaisedButton from 'material-ui/RaisedButton';
 import { Card, CardText } from 'material-ui/Card';
+
 import request from 'request';
 import ConnectionModal from './ConnectionModal';
+import SnackMessage from './SnackMessage';
 
 import QueryArea from './QueryArea';
 import ResultArea from './ResultArea';
+import utils from '../utils';
 
 class DataExplorer extends Component {
   constructor(props) {
@@ -18,19 +21,23 @@ class DataExplorer extends Component {
         mongoUrl: '',
         limit: 5,
       },
+      snackMessage: {
+        showMessage: false,
+        message: '',
+      },
     };
   }
   componentDidMount() {
-    const { connectionInfo } = this.props.location.state;
-    this.setState({ connectionInfo });
+    const { connectionInfoFromRoute } = this.props.location.state;
+    this.setState({ connectionInfo: connectionInfoFromRoute });
   }
-  openModal = () => {
+  openModal() {
     this.setState({ isModalOpen: true });
-  };
-  closeModal = () => {
+  }
+  closeModal() {
     this.setState({ isModalOpen: false });
-  };
-  submitModal = () => {
+  }
+  submitModal() {
     const mongoUrl = document.getElementById('mongoUrl').value;
     const connectionInfo = {
       mongoUrl,
@@ -38,47 +45,67 @@ class DataExplorer extends Component {
     };
     this.setState({ connectionInfo });
     this.closeModal();
-  };
-  getResults = (e) => {
-    console.log('e', e);
-    const mongoUrl = encodeURIComponent(this.state.connectionInfo.mongoUrl);
-    const limit = this.state.connectionInfo.limit;
-    const rowNumber = e.currentTarget.getAttribute('id').replace('_run', '');
-    const collection = document.getElementById(`${rowNumber}_collection`).value;
-    const field = document.getElementById(`${rowNumber}_field`).value;
-    const value = document.getElementById(`${rowNumber}_value`).value;
-    const baseUrl = 'http://localhost:9000/getResults';
-    const getResultsUrl = `${baseUrl}/${mongoUrl}/${limit}/${collection}/${field}/${value}`;
-    if (!mongoUrl || !limit || !collection || !field || !value){
-      // Send 'Missing Inputs' message
+  }
+  getResults(queryRow) {
+    let snackMessage = this.state.snackMessage;
+    if (!this.state.connectionInfo) {
+      snackMessage = utils.getSnackMessage(true, 'Missing Mongo connection info. Please configure database connection.');
+      this.setState({ snackMessage });
       return false;
     }
+    const mongoUrl = encodeURIComponent(this.state.connectionInfo.mongoUrl);
+    const limit = this.state.connectionInfo.limit;
+    const { rowNumber, collection, field, value, valueType } = queryRow;
+    const baseUrl = 'http://localhost:9000/getResults';
+    const getResultsUrl = `${baseUrl}/${mongoUrl}/${limit}/${collection}/${field}/${value}/${valueType}`;
+
+    if (!mongoUrl || !limit || !collection || !field || !value || !valueType) {
+      snackMessage = utils.getSnackMessage(true, 'Missing or invalid form values.  Please try again.');
+      this.setState({ snackMessage });
+      return false;
+    }
+    this.requestData(getResultsUrl, collection, rowNumber, snackMessage);
+    return undefined;
+  }
+  requestData(getResultsUrl, collection, rowNumber) {
+    let snackMessage = this.state.snackMessage;
     request(getResultsUrl, (err, res, body) => {
-      let newJsonResults = JSON.parse(body);
-      if (err){
+      if (err) {
         console.log('err', err);
-        // Send 'Error' message
+        snackMessage = utils.getSnackMessage(true, `Error: ${err}`);
+        this.setState({ snackMessage });
+        return false;
       }
-      if (newJsonResults.length){
+      let newJsonResults = JSON.parse(body);
+      if (newJsonResults.length) {
         newJsonResults = newJsonResults[0];
         newJsonResults.collection = collection;
-        newJsonResults.id = `${collection}_${rowNumber}`;
-
+        newJsonResults.id = `result_${rowNumber}`;
         const jsonResults = this.state.jsonResults.slice();
-        jsonResults.push(newJsonResults);
-
+        if (jsonResults.find(j => j.id === newJsonResults.id)) {
+          jsonResults[rowNumber] = newJsonResults;
+        } else {
+          jsonResults.push(newJsonResults);
+        }
         this.setState({ jsonResults });
       } else {
-        // Send 'No Results' message
+        snackMessage = utils.getSnackMessage(true, 'No results found!');
       }
+      this.setState({ snackMessage });
+      return undefined;
     });
-  };
-  clearResult = (resultId) => {
+  }
+  clearSnackMessage() {
+    const snackMessage = utils.getSnackMessage(false, '');
+    this.setState({ snackMessage });
+  }
+  clearResult(resultId) {
     const jsonResults = this.state.jsonResults.filter(result => result.id !== resultId);
     this.setState({ jsonResults });
-  };
+  }
   render() {
-    const { collectionNames, dbSchema, connectionInfo } = this.props.location.state;
+    const { collectionNames, dbSchema, connectionInfoFromRoute } = this.props.location.state;
+    const connectionInfo = (this.state.connectionInfo && this.state.connectionInfo.mongoUrl) ? this.state.connectionInfo : connectionInfoFromRoute;
     const style = { marginRight: '1em' };
     return (
       <div id="dataExplorer">
@@ -89,7 +116,7 @@ class DataExplorer extends Component {
                 <QueryArea collectionNames={collectionNames.sort()} dbSchema={dbSchema} runQuery={this.getResults.bind(this)}/>
                 <div className="row center">
                   <ConnectionModal open={this.state.isModalOpen} connectionInfo={connectionInfo} submit={this.submitModal.bind(this)} closeModal={this.closeModal.bind(this)} />
-                  <RaisedButton style={style} onClick={this.openModal} primary={false} label="Configure DB Connection"/>
+                  <RaisedButton style={style} onClick={this.openModal.bind(this)} primary={false} label="Configure DB Connection"/>
                 </div>
               </CardText>
             </Card>
@@ -103,6 +130,11 @@ class DataExplorer extends Component {
             </div>
           </div>
           : null}
+        <SnackMessage
+          open={this.state.snackMessage.showMessage}
+          message={this.state.snackMessage.message}
+          clearMessage={this.clearSnackMessage.bind(this)}
+        />
       </div>
     );
   }

@@ -24,16 +24,16 @@ class Layout extends Component {
       open: false,
     };
   }
-  toggleDrawer = () => {
+  toggleDrawer() {
     const open = !this.state.open;
     this.setState({ open });
   }
-  closeDrawerIfOpen = () => {
+  closeDrawerIfOpen() {
     if (this.state.open){
       this.setState({ open: false });
     }
   }
-  navigateToSchemaSetup = () => {
+  navigateToSchemaSetup() {
     browserHistory.push({
       pathname: '/schemaSetup',
       state: {

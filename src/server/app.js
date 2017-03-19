@@ -21,6 +21,9 @@ app.get('/getSchema/:hostname/:port/:database/:username?/:password?', (req, res)
   const password = req.params.password;
   getSchema(hostname, port, database, username, password).then((json) => {
     res.send(json);
+  }).catch((err) => {
+    console.log('err', err);
+    res.status(400).send(err.message);
   });
 });
 
@@ -28,14 +31,18 @@ app.get('/schemaFileExists', (req, res) => {
   res.send(schemaFileExists());
 });
 
-app.get('/getResults/:mongoUrl/:limit/:collection/:field/:value', (req, res) => {
+app.get('/getResults/:mongoUrl/:limit/:collection/:field/:value/:valueType', (req, res) => {
   const mongoUrl = req.params.mongoUrl;
   const limit = req.params.limit;
   const collection = req.params.collection;
   const field = req.params.field;
   const value = req.params.value;
-  getResults(mongoUrl, limit, collection, field, value).then((json) => {
+  const valueType = req.params.valueType;
+  getResults(mongoUrl, limit, collection, field, value, valueType).then((json) => {
     res.send(json);
+  }).catch((err) => {
+    console.log('err', err);
+    res.status(400).send(err.message);
   });
 });
 

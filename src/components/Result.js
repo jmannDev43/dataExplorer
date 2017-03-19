@@ -3,8 +3,9 @@ import JSONFormatter from 'json-formatter-js';
 import Close from 'material-ui/svg-icons/navigation/close';
 
 class Result extends Component {
-  componentDidMount() {
+  componentDidUpdate() {
     const formatter = new JSONFormatter(this.props.result, 3, { theme: 'dark' });
+    document.getElementById(`jsonResults_${this.props.resultIndex.toString()}`).innerHTML = '';
     document.getElementById(`jsonResults_${this.props.resultIndex.toString()}`).appendChild(formatter.render());
   }
   render() {
@@ -22,7 +23,7 @@ class Result extends Component {
 
         </div>
       </div>
-    )
+    );
   }
 }
 
