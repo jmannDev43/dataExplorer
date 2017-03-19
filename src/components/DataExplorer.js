@@ -8,12 +8,14 @@ import SnackMessage from './SnackMessage';
 
 import QueryArea from './QueryArea';
 import ResultArea from './ResultArea';
+import Loading from './Loading';
 import utils from '../utils';
 
 class DataExplorer extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      loading: false,
       selectedCollections: [],
       jsonResults: [],
       isModalOpen: false,
@@ -47,10 +49,12 @@ class DataExplorer extends Component {
     this.closeModal();
   }
   getResults(queryRow) {
+    this.setState({ loading: true });
     let snackMessage = this.state.snackMessage;
     if (!this.state.connectionInfo) {
       snackMessage = utils.getSnackMessage(true, 'Missing Mongo connection info. Please configure database connection.');
       this.setState({ snackMessage });
+      this.setState({ loading: false});
       return false;
     }
     const mongoUrl = encodeURIComponent(this.state.connectionInfo.mongoUrl);
@@ -62,6 +66,7 @@ class DataExplorer extends Component {
     if (!mongoUrl || !limit || !collection || !field || !value || !valueType) {
       snackMessage = utils.getSnackMessage(true, 'Missing or invalid form values.  Please try again.');
       this.setState({ snackMessage });
+      this.setState({ loading: false});
       return false;
     }
     this.requestData(getResultsUrl, collection, rowNumber, snackMessage);
@@ -74,6 +79,7 @@ class DataExplorer extends Component {
         console.log('err', err);
         snackMessage = utils.getSnackMessage(true, `Error: ${err}`);
         this.setState({ snackMessage });
+        this.setState({ loading: false});
         return false;
       }
       const newJsonResults = JSON.parse(body);
@@ -91,6 +97,7 @@ class DataExplorer extends Component {
         snackMessage = utils.getSnackMessage(true, 'No results found!');
       }
       this.setState({ snackMessage });
+      this.setState({ loading: false});
       return undefined;
     });
   }
@@ -134,6 +141,8 @@ class DataExplorer extends Component {
           message={this.state.snackMessage.message}
           clearMessage={this.clearSnackMessage.bind(this)}
         />
+        <br />
+        {this.state.loading ? <Loading/> : null}
       </div>
     );
   }

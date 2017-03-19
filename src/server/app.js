@@ -1,5 +1,4 @@
 const express = require('express');
-const path = require('path');
 
 const getSchema = require('./getSchema.js');
 const schemaFileExists = require('./schemaFileExists.js');
