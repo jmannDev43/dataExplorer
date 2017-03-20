@@ -30,7 +30,7 @@ app.get('/schemaFileExists', (req, res) => {
   res.send(schemaFileExists());
 });
 
-app.get('/getResults/:mongoUrl/:limit/:collection/:field/:value/:valueType', (req, res) => {
+app.get('/getResults/:mongoUrl/:limit/:collection/:field?/:value?/:valueType?', (req, res) => {
   const mongoUrl = req.params.mongoUrl;
   const limit = req.params.limit;
   const collection = req.params.collection;

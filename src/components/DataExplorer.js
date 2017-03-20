@@ -61,9 +61,14 @@ class DataExplorer extends Component {
     const limit = this.state.connectionInfo.limit;
     const { rowNumber, collection, field, value, valueType } = queryRow;
     const baseUrl = 'http://localhost:9000/getResults';
-    const getResultsUrl = `${baseUrl}/${mongoUrl}/${limit}/${collection}/${field}/${value}/${valueType}`;
+    let getResultsUrl;
+    if (field && value && valueType) {
+      getResultsUrl = `${baseUrl}/${mongoUrl}/${limit}/${collection}/${field}/${value}/${valueType}`;
+    } else {
+      getResultsUrl = `${baseUrl}/${mongoUrl}/${limit}/${collection}`;
+    }
 
-    if (!mongoUrl || !limit || !collection || !field || !value || !valueType) {
+    if (!mongoUrl || !limit || !collection) {
       snackMessage = utils.getSnackMessage(true, 'Missing or invalid form values.  Please try again.');
       this.setState({ snackMessage });
       this.setState({ loading: false});

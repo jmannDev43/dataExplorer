@@ -15,12 +15,14 @@ const convertValue = (value, valueType) => {
 const getResults = (mongoUrl, limit, collection, field, value, valueType) => {
   let newValue;
   const query = {};
-  if (value.indexOf(',') > -1) {
-    newValue = value.split(',').map(val => convertValue(val, valueType));
-    query[field] = { $in: newValue };
-  } else {
-    newValue = convertValue(value, valueType);
-    query[field] = newValue;
+  if (value) {
+    if (value.indexOf(',') > -1) {
+      newValue = value.split(',').map(val => convertValue(val, valueType));
+      query[field] = { $in: newValue };
+    } else {
+      newValue = convertValue(value, valueType);
+      query[field] = newValue;
+    }
   }
 
   return new Promise((resolve, reject) => {
@@ -32,7 +34,6 @@ const getResults = (mongoUrl, limit, collection, field, value, valueType) => {
       }
       const limitInt = parseInt(limit);
       db.collection(collection).find(query).limit(limitInt).toArray((err, results) => {
-        console.log('results', results);
         db.close();
         return resolve(JSON.stringify(results));
       });

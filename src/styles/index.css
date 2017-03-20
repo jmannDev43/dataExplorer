@@ -68,3 +68,9 @@ body {
   border-radius: 2px;
   cursor: ew-resize;
 }
+
+.react-resizable {
+  margin: 0 1em 0 1em !important;
+  display: inline-block !important;
+  vertical-align: top;
+}
