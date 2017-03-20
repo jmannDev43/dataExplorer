@@ -89,6 +89,7 @@ class DataExplorer extends Component {
       }
       const newJsonResults = JSON.parse(body);
       if (newJsonResults.length) {
+        newJsonResults.collection = collection;
         const jsonResults = this.state.jsonResults.slice();
         if (jsonResults.find(j => j.id === newJsonResults.id)) {
           jsonResults[rowNumber] = newJsonResults;
@@ -123,7 +124,7 @@ class DataExplorer extends Component {
           <div className="col col-sm-10 col-sm-offset-1">
             <Card>
               <CardText>
-                <QueryArea collectionNames={collectionNames.sort()} dbSchema={dbSchema} runQuery={this.getResults.bind(this)}/>
+                <QueryArea collectionNames={collectionNames.sort()} clearResult={this.clearResult.bind(this)} dbSchema={dbSchema} runQuery={this.getResults.bind(this)}/>
                 <div className="row center">
                   <ConnectionModal open={this.state.isModalOpen} connectionInfo={connectionInfo} submit={this.submitModal.bind(this)} closeModal={this.closeModal.bind(this)} />
                   <RaisedButton style={style} onClick={this.openModal.bind(this)} primary={false} label="Configure DB Connection"/>

@@ -46,6 +46,15 @@ class QueryRow extends Component {
       document.getElementById(`${rowNumber}_run`).click();
     }
   }
+  addRow() {
+    this.props.addRow(this.props.rowInfo.rowNumber);
+  }
+  removeRow() {
+    this.props.removeRow(this.props.rowInfo.rowNumber);
+  }
+  runQuery() {
+    this.props.runQuery(this.props.rowInfo.rowNumber);
+  }
   render() {
     const style = {
       margin: {
@@ -59,7 +68,7 @@ class QueryRow extends Component {
         margin: '0 0 0 0',
       },
     };
-    const fabMethod = this.props.rowInfo.rowNumber === this.props.lastRowNumber ? this.props.addRow : this.props.removeRow;
+    const fabMethod = this.props.rowInfo.rowNumber === this.props.lastRowNumber ? this.addRow.bind(this) : this.props.removeRow.bind(this);
     const fabIcon = this.props.rowInfo.rowNumber === this.props.lastRowNumber ? <ContentAdd/> : <ContentRemove/>;
     return (
       <div className="center queryRow" data-row-number={this.props.rowNumber}>
@@ -107,8 +116,8 @@ class QueryRow extends Component {
         </IconMenu>
         <FloatingActionButton
           id={`${this.props.rowInfo.rowNumber}_run`}
-          onTouchTap={this.props.runQuery}
-          onClick={this.props.runQuery}
+          onTouchTap={this.runQuery.bind(this)}
+          onClick={this.runQuery.bind(this)}
           mini={true} secondary={true}
           style={style.margin}>
           {<PlayArrow />}

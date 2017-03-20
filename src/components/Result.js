@@ -7,7 +7,7 @@ class Result extends Component {
     const formatter = new JSONFormatter(this.props.result, 1, { theme: 'dark' });
     document.getElementById(`jsonResults_${this.props.resultIndex.toString()}`).innerHTML = '';
     const p = document.createElement('p');
-    p.innerText = document.getElementById(`${this.props.resultIndex.toString()}_collection`).value;
+    p.innerText = this.props.result.collection;
     p.className = 'resultHeader';
     document.getElementById(`jsonResults_${this.props.resultIndex.toString()}`).appendChild(p);
     document.getElementById(`jsonResults_${this.props.resultIndex.toString()}`).appendChild(formatter.render());

@@ -15,18 +15,24 @@ class QueryArea extends Component {
       newRow.focus();
     }
   }
-  addRow(e) {
-    const nextRowNumber = this.state.queryRows[this.state.queryRows.length - 1].rowNumber + 1;
+  addRow(rowNumber) {
+    const nextRowNumber = rowNumber + 1;
     const nextRow = { rowNumber: nextRowNumber, collection: '', field: '', value: '', valueType: 'string' };
     const queryRows = this.state.queryRows.slice();
     queryRows.push(nextRow);
     this.setState({ queryRows });
   }
-  removeRow(e) {
-    const removeIndex = parseInt(e.currentTarget.getAttribute('id').substr(0, 1), 10);
-    const queryRows = this.state.queryRows.slice();
+  removeRow(removeIndex) {
+    let queryRows = this.state.queryRows.slice();
     queryRows.splice(removeIndex, 1);
+    queryRows = queryRows.map((row, i) => {
+      return {
+        ...row,
+        rowNumber: i,
+      };
+    });
     this.setState({ queryRows });
+    this.props.clearResult(removeIndex);
   }
   updateRow(rowNumber, propertyName, newValue) {
     const rowIndex = this.state.queryRows.findIndex(r => r.rowNumber === rowNumber);
@@ -35,8 +41,7 @@ class QueryArea extends Component {
     queryRows[rowIndex][propertyName] = updatedValue;
     this.setState({ queryRows });
   }
-  runQuery(e) {
-    const rowNumber = e.currentTarget.getAttribute('id').replace('_run', '');
+  runQuery(rowNumber) {
     const queryRow = this.state.queryRows[rowNumber];
     this.props.runQuery(queryRow);
   }
