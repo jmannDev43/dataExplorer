@@ -12,6 +12,9 @@ class Result extends Component {
     document.getElementById(`jsonResults_${this.props.resultIndex.toString()}`).appendChild(p);
     document.getElementById(`jsonResults_${this.props.resultIndex.toString()}`).appendChild(formatter.render());
   }
+  clearResult(e) {
+    this.props.clearResult(this.props.resultIndex);
+  }
   render() {
     const style = {
       padding: '1em',
@@ -20,7 +23,7 @@ class Result extends Component {
     };
     return (
       <div key={this.props.result.id} id={this.props.result.id}>
-        <div className="closeIcon" onClick={this.props.clearResult.bind(null, this.props.result.id)}>
+        <div className="closeIcon" onClick={this.clearResult.bind(this)}>
           <Close color="white" />
         </div>
         <div id={`jsonResults_${this.props.resultIndex.toString()}`} style={style}>

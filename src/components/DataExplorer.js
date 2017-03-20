@@ -109,7 +109,8 @@ class DataExplorer extends Component {
     this.setState({ snackMessage });
   }
   clearResult(resultId) {
-    const jsonResults = this.state.jsonResults.filter(result => result.id !== resultId);
+    const jsonResults = this.state.jsonResults;
+    jsonResults.splice(resultId, 1);
     this.setState({ jsonResults });
   }
   render() {
