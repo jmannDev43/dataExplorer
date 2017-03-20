@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import Result from './Result';
+import { Resizable, ResizableBox } from 'react-resizable';
 
 class ResultArea extends Component {
   constructor() {
@@ -12,7 +13,9 @@ class ResultArea extends Component {
     return (
       <div>
         {this.props.jsonResults.map((result, i) => {
-          return <Result key={`result_${i.toString()}`} result={result} resultIndex={i} clearResult={this.props.clearResult} />;
+          return <ResizableBox key={`result_${i.toString()}`} width={345} height={300} >
+            <Result result={result} resultIndex={i} clearResult={this.props.clearResult} />
+          </ResizableBox>;
         })}
       </div>
     );

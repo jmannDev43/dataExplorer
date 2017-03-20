@@ -84,8 +84,6 @@ class DataExplorer extends Component {
       }
       const newJsonResults = JSON.parse(body);
       if (newJsonResults.length) {
-        newJsonResults.collection = collection;
-        newJsonResults.id = `result_${rowNumber}`;
         const jsonResults = this.state.jsonResults.slice();
         if (jsonResults.find(j => j.id === newJsonResults.id)) {
           jsonResults[rowNumber] = newJsonResults;
@@ -97,7 +95,7 @@ class DataExplorer extends Component {
         snackMessage = utils.getSnackMessage(true, 'No results found!');
       }
       this.setState({ snackMessage });
-      this.setState({ loading: false});
+      this.setState({ loading: false });
       return undefined;
     });
   }

@@ -50,8 +50,21 @@ body {
 }
 
 .closeIcon {
-  position: absolute;
-  right: 29px;
-  top: 11px;
+  float: right;
+  padding: 1em;
   cursor: pointer;
+}
+
+.resultHeader {
+  color: #17c1e0;
+  border-bottom: 1px solid #17c1e0;
+}
+
+.react-resizable-handle {
+  touch-action: none;
+  color: #bfbfbf;
+  display: block;
+  border: 2px solid !important;
+  border-radius: 2px;
+  cursor: ew-resize;
 }

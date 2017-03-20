@@ -28,11 +28,12 @@ const getSchema = (hostname, port, databaseName, userName, password) => {
           db.close();
           return reject(new Error('Invalid connection info.  Please re-configure connection details and try again.'));
         }
-        const collectionNames = collections.map(c => c.name);
+        const collectionNames = collections.map(c => c.name).sort();
         const lastCollectionName = _.last(collectionNames);
+
         collectionNames.forEach((name) => {
           console.log(`running collection: ${name.toUpperCase()}`);
-          exec(`mongo ${databaseName} --eval "var collection = '${name}', outputFormat='json'" ${__dirname}/variety.js --port ${port} --quiet`, (err, stdout, stderr) => {
+          exec(`mongo ${databaseName} --eval "var collection = '${name}', outputFormat='json', limit = 1, maxDepth = 3" ${__dirname}/variety.js --port ${port} --quiet`, (err, stdout, stderr) => {
             let json = [];
             if (stdout) {
               try {
